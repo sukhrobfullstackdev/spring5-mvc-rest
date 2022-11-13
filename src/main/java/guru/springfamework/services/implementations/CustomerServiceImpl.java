@@ -1,6 +1,7 @@
 package guru.springfamework.services.implementations;
 
 import guru.springfamework.domain.Customer;
+import guru.springfamework.exception.ResourceNotFoundException;
 import guru.springfamework.payload.CustomerDTO;
 import guru.springfamework.repositories.CustomerRepository;
 import guru.springfamework.services.interfaces.CustomerService;
@@ -36,7 +37,7 @@ public class CustomerServiceImpl implements CustomerService {
             Customer customer = optionalCustomer.get();
             return new CustomerDTO(customer.getFirstName(), customer.getLastName(), CUSTOMER_BASE_URL + customer.getId());
         } else {
-            return new CustomerDTO();
+            throw new ResourceNotFoundException("The customer has not been found by id : "+ id +"!");
         }
     }
 
@@ -55,13 +56,16 @@ public class CustomerServiceImpl implements CustomerService {
             customer.setLastName(customerDTO.getLastName());
             Customer savedCustomer = customerRepository.save(customer);
             return new CustomerDTO(savedCustomer.getFirstName(), savedCustomer.getLastName(), CUSTOMER_BASE_URL + savedCustomer.getId());
+        } else {
+            throw new ResourceNotFoundException("The customer has not been found to update by id: "+ id +"!");
         }
-        return new CustomerDTO();
     }
 
     @Override
     public CustomerDTO updateCustomerPartial(Long id, CustomerDTO customerDTO) {
-        return customerRepository.findById(id).map(customer -> {
+        Optional<Customer> optionalCustomer = customerRepository.findById(id);
+        if (optionalCustomer.isPresent()) {
+            Customer customer = optionalCustomer.get();
             if (customerDTO.getFirstName() != null) {
                 customer.setFirstName(customerDTO.getFirstName());
             }
@@ -70,7 +74,9 @@ public class CustomerServiceImpl implements CustomerService {
             }
             Customer savedCustomer = customerRepository.save(customer);
             return new CustomerDTO(savedCustomer.getFirstName(), savedCustomer.getFirstName(), CUSTOMER_BASE_URL + savedCustomer.getId());
-        }).orElseThrow(RuntimeException::new);
+        } else {
+         throw new ResourceNotFoundException("The customer has not been found to edit by id: "+ id +"!");
+        }
     }
 
     @Override
