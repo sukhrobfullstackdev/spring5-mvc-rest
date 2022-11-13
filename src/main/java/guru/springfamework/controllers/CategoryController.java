@@ -2,7 +2,7 @@ package guru.springfamework.controllers;
 
 import guru.springfamework.domain.Category;
 import guru.springfamework.payload.CategoryListDTO;
-import guru.springfamework.services.CategoryService;
+import guru.springfamework.services.interfaces.CategoryService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
