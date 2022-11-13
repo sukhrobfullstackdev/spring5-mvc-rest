@@ -37,4 +37,23 @@ public class CustomerServiceImpl implements CustomerService {
             return new CustomerDTO();
         }
     }
+
+    @Override
+    public CustomerDTO createCustomer(CustomerDTO customerDTO) {
+        Customer savedCustomer = customerRepository.save(new Customer(customerDTO.getFirstName(), customerDTO.getLastName()));
+        return new CustomerDTO(savedCustomer.getFirstName(),savedCustomer.getLastName(),"/api/v1/customers/" + savedCustomer.getId());
+    }
+
+    @Override
+    public CustomerDTO updateCustomer(Long id, CustomerDTO customerDTO) {
+        Optional<Customer> optionalCustomer = customerRepository.findById(id);
+        if (optionalCustomer.isPresent()) {
+            Customer customer = optionalCustomer.get();
+            customer.setFirstName(customerDTO.getFirstName());
+            customer.setLastName(customerDTO.getLastName());
+            Customer savedCustomer = customerRepository.save(customer);
+            return new CustomerDTO(savedCustomer.getFirstName(),savedCustomer.getLastName(),"/api/v1/customers/" + savedCustomer.getId());
+        }
+        return new CustomerDTO();
+    }
 }
